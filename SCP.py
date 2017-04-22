@@ -1,8 +1,8 @@
 import urllib.request
-import requests
 import re
-import constants
 import os
+import requests
+import constants
 from bs4 import BeautifulSoup
 
 
@@ -90,14 +90,13 @@ class SCP:
         try:
             num = int(self.designation)
             if num < 1:
-                raise UnknownSeriesException('Could not find series for SCP-' + self.designation + '.')
-            if num < 1000:
-                return 'http://www.scp-wiki.net/scp-series'
-            if num < 2000:
-                return 'http://www.scp-wiki.net/scp-series-2'
-            if num < 3000:
-                return 'http://www.scp-wiki.net/scp-series-3'
-        except:
+                if num < 1000:
+                    return 'http://www.scp-wiki.net/scp-series'
+                if num < 2000:
+                    return 'http://www.scp-wiki.net/scp-series-2'
+                if num < 3000:
+                    return 'http://www.scp-wiki.net/scp-series-3'
+        except ValueError:
             if self.designation.lower().find('j') >= 0 or self.designation.lower().find('cu') >= 0:
                 return 'http://www.scp-wiki.net/joke-scps'
             if self.designation.lower().find('ex') >= 0:

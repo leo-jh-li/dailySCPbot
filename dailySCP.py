@@ -1,13 +1,12 @@
 import random
 import urllib
-import time
-import tweepy
-import config
 import os
 import re
-import constants
-import schedule
 import time
+import constants
+import config
+import schedule
+import tweepy
 from SCP import SCP, NoNameException, NoOclassException, UnknownSeriesException
 
 auth = tweepy.OAuthHandler(config.CONSUMER_KEY, config.CONSUMER_SECRET)
@@ -32,7 +31,7 @@ def formatDesignation(designation):
     return formattedStr
 
 
-def reportError(designation, error, status=None):
+def reportError(error, designation=None, status=None):
     '''
     Lets the creator know he messed up.
 
@@ -40,8 +39,10 @@ def reportError(designation, error, status=None):
         designation: The designation of the SCP that caused the error.
         error: The error message.
     '''
-    report = ('Anomalous entry: SCP-' + designation + '\n'
-              'Error: ' + error)
+    report = ''
+    if designation is not None:
+        report += 'Anomalous entry: SCP-' + designation + '\n'
+    report = 'Error: ' + error
     if status is not None:
         report += '\nUser: ' + status.user.screen_name
         report += '\nTweet:\n' + status.text
@@ -70,7 +71,7 @@ def postSCP(designation):
             api.update_status(scp.getCompleteStr())
     except (urllib.error.HTTPError, NoNameException, NoOclassException,
             UnknownSeriesException) as err:
-        reportError(designation, str(err))
+        reportError(str(err), designation)
         raise PostSCPFailureException(str(err))
 
 
@@ -82,6 +83,7 @@ def postRandomSCP():
 
 
 def replyWithSCP(designation, status):
+    ''' Tries to answer a request for information on an SCP. '''
     if designation is not None:
         formattedDesignation = formatDesignation(designation)
         mention = '@' + status.user.screen_name + ' '
@@ -101,7 +103,7 @@ def replyWithSCP(designation, status):
             else:
                 api.update_status(mention + str(scp), in_reply_to_status_id=status.id_str)
         except (urllib.error.HTTPError, UnknownSeriesException) as err:
-            reportError(designation, str(err), status)
+            reportError(str(err), designation, status)
             errorStatus = (mention + 'SCP-' + str(designation).upper() + ' - [ACCESS DENIED]\n'
                            'Object Class: [DATA EXPUNGED]\n'
                            'http://scp-wiki.net/scp-\u2588\u2588\u2588\u2588')
@@ -109,6 +111,13 @@ def replyWithSCP(designation, status):
 
 
 def extractSCPDesignation(statusText):
+    '''
+    Gets the designation from text that may mention an SCP.
+
+    Returns:
+        The SCP's designation, or None if an appropriate one could not be
+        found.
+    '''
     statusText = removeMention(statusText)
     scps = re.findall('SCP-[a-zA-Z0-9-]+', statusText, re.IGNORECASE)
     if len(scps) == 1:
@@ -129,6 +138,12 @@ def extractSCPDesignation(statusText):
 
 
 def removeMention(statusText):
+    '''
+    Removes the mention of the bot from the given text.
+
+    Returns:
+        The text without the @DailySCP.
+    '''
     mentionIndex = statusText.lower().find(constants.BOT_HANDLE)
     if mentionIndex >= 0:
         statusText = statusText[:mentionIndex] + statusText[mentionIndex + len(constants.BOT_HANDLE):]
@@ -136,6 +151,10 @@ def removeMention(statusText):
 
 
 class PostSCPFailureException(Exception):
+    '''
+    Raised if an HTTPError, NoNameException, NoOclassException, or
+    UnknownSeriesException occurs while trying to post an SCP.
+    '''
     pass
 
 
@@ -145,7 +164,7 @@ class SCPStreamListener(tweepy.StreamListener):
         if designation is not None:
             replyWithSCP(designation, status)
         else:
-            reportError(designation, 'Unable to parse SCP from user tweet.', status)
+            reportError('Unable to parse SCP from user tweet.', designation, status)
 
     def on_error(self, statusCode):
         if statusCode == 420:
@@ -170,12 +189,12 @@ def scheduledPost(firstAttempt=True):
             attempts += 1
         # if failed 10 times, sleep for 6 hrs and try again
         if attempts > constants.MAX_POST_ATTEMPTS and firstAttempt:
-            reportError('xxx', 'Failed to post 10 consecutive times.')
+            reportError('Failed to post 10 consecutive times.')
             time.sleep(constants.FAILURE_SLEEP_DURATION)
             print('Trying again...')
             scheduledPost(False)
 
-schedule.every().hour.do(scheduledPost)
+schedule.every().day.at("0:00").do(scheduledPost)
 
 while True:
     schedule.run_pending()
