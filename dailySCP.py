@@ -188,7 +188,7 @@ def scheduledPost(firstAttempt=True):
         except PostSCPFailureException:
             attempts += 1
         # if failed 10 times, sleep for 6 hrs and try again
-        if attempts > constants.MAX_POST_ATTEMPTS and firstAttempt:
+        if attempts >= constants.MAX_POST_ATTEMPTS and firstAttempt:
             reportError('Failed to post 10 consecutive times.')
             time.sleep(constants.FAILURE_SLEEP_DURATION)
             print('Trying again...')
