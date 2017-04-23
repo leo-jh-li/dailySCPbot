@@ -194,7 +194,7 @@ def scheduledPost(firstAttempt=True):
             print('Trying again...')
             scheduledPost(False)
 
-schedule.every().day.at(POST_TIME_UTC).do(scheduledPost)
+schedule.every().day.at(constants.POST_TIME_UTC).do(scheduledPost)
 
 while True:
     schedule.run_pending()
