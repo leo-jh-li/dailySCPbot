@@ -41,7 +41,7 @@ def reportError(error, designation=None, status=None):
     '''
     report = ''
     if designation is not None:
-        report += 'Anomalous entry: SCP-' + designation + '\n'
+        report += 'Anomalous entry: SCP-' + str(designation) + '\n'
     report = 'Error: ' + error
     if status is not None:
         report += '\nUser: ' + status.user.screen_name
