@@ -89,7 +89,7 @@ class SCP:
         '''
         try:
             num = int(self.designation)
-            if num < 1:
+            if not num < 1:
                 if num < 1000:
                     return 'http://www.scp-wiki.net/scp-series'
                 if num < 2000:
