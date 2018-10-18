@@ -8,7 +8,7 @@ VALID_OBJECT_CLASSES = ['explained',
                         'none',
                         'unknown']
 DASHES_IN_LISTING = 2
-SCP_ENTRIES = 2999
+SCP_ENTRIES = 3999
 IMAGES_DIR = 'images'
 BOT_HANDLE = '@dailyscp'
 FAILURE_SLEEP_DURATION = 216000  # 6 hours
