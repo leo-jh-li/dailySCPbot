@@ -96,6 +96,12 @@ class SCP:
                     return 'http://www.scp-wiki.net/scp-series-2'
                 if num < 3000:
                     return 'http://www.scp-wiki.net/scp-series-3'
+                if num < 4000:
+                    return 'http://www.scp-wiki.net/scp-series-4'
+                if num < 5000:
+                    return 'http://www.scp-wiki.net/scp-series-5'
+                if num < 6000:
+                    return 'http://www.scp-wiki.net/scp-series-6'
         except ValueError:
             if self.designation.lower().find('j') >= 0 or self.designation.lower().find('cu') >= 0:
                 return 'http://www.scp-wiki.net/joke-scps'

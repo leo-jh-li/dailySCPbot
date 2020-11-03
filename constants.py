@@ -8,9 +8,9 @@ VALID_OBJECT_CLASSES = ['explained',
                         'none',
                         'unknown']
 DASHES_IN_LISTING = 2
-SCP_ENTRIES = 3999
+SCP_ENTRIES = 5999 # note: if this value is updated, __getSeriesUrl() must be updated accordingly
 IMAGES_DIR = 'images'
 BOT_HANDLE = '@dailyscp'
 FAILURE_SLEEP_DURATION = 216000  # 6 hours
-MAX_POST_ATTEMPTS = 10
-POST_TIME_UTC = "4:00"
+MAX_POST_ATTEMPTS = 100
+POST_TIME_UTC = "04:00"

@@ -172,7 +172,7 @@ class SCPStreamListener(tweepy.StreamListener):
 
 streamListener = SCPStreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=streamListener)
-stream.filter(track=['@DailySCP'], async=True)
+stream.filter(track=['@DailySCP'], is_async=True)
 
 
 def scheduledPost(firstAttempt=True):
@@ -187,7 +187,7 @@ def scheduledPost(firstAttempt=True):
             break
         except PostSCPFailureException:
             attempts += 1
-        # if failed 10 times, sleep for 6 hrs and try again
+        # if failed 100 times, sleep for 6 hrs and try again
         if attempts >= constants.MAX_POST_ATTEMPTS and firstAttempt:
             reportError('Failed to post 10 consecutive times.')
             time.sleep(constants.FAILURE_SLEEP_DURATION)
